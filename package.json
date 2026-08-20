@@ -9,9 +9,6 @@
     "dev": "npm run generate && npx wrangler pages dev public --compatibility-date=2026-01-01",
     "deploy": "npm run generate && npx wrangler pages deploy public"
   },
-  "dependencies": {
-    "bcryptjs": "^2.4.3"
-  },
   "devDependencies": {
     "wrangler": "^3.90.0"
   }

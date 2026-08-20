@@ -140,7 +140,7 @@ functions/
     render.js             ← HTML templates (shared by generate.js AND the Functions)
     github.js             ← GitHub Git Data API client (atomic commits)
     site.js               ← "publish" orchestrator
-    auth.js                ← session cookie + bcrypt password check
+    auth.js                ← session cookie + PBKDF2 password check (Web Crypto, zero dependencies)
     validate.js
   api/
     auth/login.js, auth/logout.js
