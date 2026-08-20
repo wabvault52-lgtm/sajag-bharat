@@ -1,0 +1,21 @@
+name = "sajag-bharat"
+pages_build_output_dir = "public"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables / secrets are NOT set here (never commit secrets).
+# Set them in the Cloudflare dashboard (Pages project → Settings →
+# Environment variables) or via `wrangler pages secret put <NAME>`:
+#
+#   GITHUB_TOKEN         (secret) — a fine-grained GitHub PAT with
+#                          Contents: Read & write on this one repo
+#   GITHUB_OWNER         (plain)  — your GitHub username or org
+#   GITHUB_REPO          (plain)  — this repo's name
+#   GITHUB_BRANCH        (plain)  — usually "main"
+#   ADMIN_USERNAME       (plain)  — the admin login username
+#   ADMIN_PASSWORD_HASH  (secret) — bcrypt hash of the admin password
+#                          (generate with: node scripts/hash-password.js)
+#   SESSION_SECRET       (secret) — any long random string, e.g.
+#                          `openssl rand -hex 32`
+#
+# See README.md for the full setup walkthrough.

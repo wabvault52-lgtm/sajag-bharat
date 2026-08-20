@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>सजग भारत</title>
+  <link>https://sajagbharat.pages.dev</link>
+  <description>हर खबर पर, हर पल नज़र</description>
+  <language>hi</language>
+  <item>
+    <title>फिल्म उद्योग में इस हफ्ते की बड़ी हलचल</title>
+    <link>https://sajagbharat.pages.dev/news/film-udyog-is-hafte-badi-halchal</link>
+    <guid>https://sajagbharat.pages.dev/news/film-udyog-is-hafte-badi-halchal</guid>
+    <pubDate>Mon, 17 Aug 2026 11:00:00 GMT</pubDate>
+    <description>आने वाली रिलीज़ों को लेकर दर्शकों में उत्सुकता का माहौल है।</description>
+  </item>
+  <item>
+    <title>मानसून सीज़न में स्वास्थ्य विभाग की सतर्कता बढ़ी</title>
+    <link>https://sajagbharat.pages.dev/news/monsoon-season-swasthya-vibhag-satarkta</link>
+    <guid>https://sajagbharat.pages.dev/news/monsoon-season-swasthya-vibhag-satarkta</guid>
+    <pubDate>Mon, 17 Aug 2026 07:20:00 GMT</pubDate>
+    <description>मौसमी बीमारियों की रोकथाम के लिए स्वास्थ्य विभाग ने जागरूकता अभियान तेज़ किया है।</description>
+  </item>
+  <item>
+    <title>वैश्विक बाज़ारों में उतार-चढ़ाव, निवेशक सतर्क</title>
+    <link>https://sajagbharat.pages.dev/news/vaishvik-bazaar-utar-chadhav-nivesh</link>
+    <guid>https://sajagbharat.pages.dev/news/vaishvik-bazaar-utar-chadhav-nivesh</guid>
+    <pubDate>Sun, 16 Aug 2026 04:45:00 GMT</pubDate>
+    <description>अंतरराष्ट्रीय स्तर पर आर्थिक अनिश्चितता के बीच भारतीय बाज़ारों पर भी असर देखा जा रहा है।</description>
+  </item>
+  <item>
+    <title>घरेलू क्रिकेट सीज़न में युवा खिलाड़ियों का शानदार प्रदर्शन</title>
+    <link>https://sajagbharat.pages.dev/news/gharelu-cricket-season-yuva-khiladi-pradarshan</link>
+    <guid>https://sajagbharat.pages.dev/news/gharelu-cricket-season-yuva-khiladi-pradarshan</guid>
+    <pubDate>Sat, 15 Aug 2026 09:15:00 GMT</pubDate>
+    <description>इस सीज़न में कई नए खिलाड़ियों ने अपने प्रदर्शन से चयनकर्ताओं का ध्यान खींचा है।</description>
+  </item>
+  <item>
+    <title>राष्ट्रीय स्तर पर शिक्षा सुधार पर चर्चा तेज़</title>
+    <link>https://sajagbharat.pages.dev/news/rashtriya-shiksha-sudhar-charcha</link>
+    <guid>https://sajagbharat.pages.dev/news/rashtriya-shiksha-sudhar-charcha</guid>
+    <pubDate>Wed, 12 Aug 2026 05:00:00 GMT</pubDate>
+    <description>स्कूली पाठ्यक्रम में बदलाव को लेकर राज्यों और केंद्र के बीच संवाद जारी है।</description>
+  </item>
+  <item>
+    <title>नई तकनीकी नीति को लेकर विशेषज्ञों की राय अलग-अलग</title>
+    <link>https://sajagbharat.pages.dev/news/nai-takniki-niti-visheshagya-raay</link>
+    <guid>https://sajagbharat.pages.dev/news/nai-takniki-niti-visheshagya-raay</guid>
+    <pubDate>Mon, 10 Aug 2026 06:30:00 GMT</pubDate>
+    <description>डिजिटल क्षेत्र में हाल ही में लागू हुई नई नीति को लेकर उद्योग जगत में मिली-जुली प्रतिक्रिया देखी जा रही है।</description>
+  </item>
+</channel>
+</rss>

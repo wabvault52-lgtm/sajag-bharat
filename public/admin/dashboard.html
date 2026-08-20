@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>डैशबोर्ड | सजग भारत एडमिन</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="admin-body">
+  <header class="admin-bar">
+    <div class="admin-bar-brand">
+      <span class="brand-mark" aria-hidden="true"><span class="beacon"></span></span>
+      <span class="brand-name">सजग भारत <small>एडमिन</small></span>
+    </div>
+    <button class="btn btn-ghost" id="logoutBtn">लॉगआउट</button>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ===== Articles list view ===== -->
+    <section id="listView">
+      <div class="admin-toolbar">
+        <h1>लेख</h1>
+        <button class="btn btn-primary" id="newArticleBtn">+ नया लेख</button>
+      </div>
+      <div id="listStatus" class="form-status" hidden></div>
+      <table class="admin-table" id="articlesTable">
+        <thead>
+          <tr>
+            <th>शीर्षक</th>
+            <th>श्रेणी</th>
+            <th>स्थिति</th>
+            <th>प्रकाशित</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="articlesTableBody">
+          <tr><td colspan="5" class="admin-table-empty">लोड हो रहा है…</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== Editor view ===== -->
+    <section id="editorView" hidden>
+      <div class="admin-toolbar">
+        <h1 id="editorTitle">नया लेख</h1>
+        <button class="btn btn-ghost" id="backToListBtn">← सूची पर वापस जाएँ</button>
+      </div>
+
+      <form id="articleForm" class="admin-form admin-form--editor">
+        <input type="hidden" id="articleId" name="id">
+
+        <label>
+          <span>शीर्षक</span>
+          <input type="text" id="title" name="title" required>
+        </label>
+
+        <label>
+          <span>स्लग (URL)</span>
+          <div class="slug-row">
+            <span class="slug-prefix">/news/</span>
+            <input type="text" id="slug" name="slug" required pattern="[a-z0-9\-]+" title="केवल छोटे अक्षर, संख्याएँ और हाइफ़न (-) मान्य हैं, स्पेस नहीं">
+          </div>
+        </label>
+
+        <label>
+          <span>श्रेणी</span>
+          <select id="category" name="category" required></select>
+        </label>
+
+        <label>
+          <span>संक्षिप्त परिचय (Excerpt)</span>
+          <textarea id="excerpt" name="excerpt" rows="2" required></textarea>
+        </label>
+
+        <label>
+          <span>मुख्य सामग्री</span>
+          <textarea id="content" name="content" rows="12" required placeholder="हर पैराग्राफ़ को एक खाली लाइन से अलग करें।"></textarea>
+          <small class="field-hint">हर पैराग्राफ़ के बीच एक खाली लाइन छोड़ें — सेव करने पर यह अपने आप अलग-अलग पैराग्राफ़ बन जाएँगे।</small>
+        </label>
+
+        <label>
+          <span>मुख्य तस्वीर (वैकल्पिक)</span>
+          <input type="file" id="imageInput" accept="image/*">
+          <div id="imagePreviewWrap" class="image-preview-wrap" hidden>
+            <img id="imagePreview" alt="">
+            <button type="button" class="btn btn-ghost btn-small" id="removeImageBtn">तस्वीर हटाएँ</button>
+          </div>
+          <input type="hidden" id="featuredImage" name="featuredImage">
+        </label>
+
+        <fieldset class="admin-fieldset">
+          <legend>SEO (वैकल्पिक — खाली छोड़ने पर शीर्षक/परिचय से अपने आप बन जाएगा)</legend>
+          <label>
+            <span>Meta Title</span>
+            <input type="text" id="metaTitle" name="metaTitle">
+          </label>
+          <label>
+            <span>Meta Description</span>
+            <textarea id="metaDescription" name="metaDescription" rows="2"></textarea>
+          </label>
+        </fieldset>
+
+        <label class="status-field">
+          <span>स्थिति</span>
+          <select id="status" name="status">
+            <option value="draft">ड्राफ़्ट</option>
+            <option value="published">प्रकाशित करें</option>
+          </select>
+        </label>
+
+        <p id="editorError" class="form-error" hidden></p>
+        <p id="editorStatus" class="form-status" hidden></p>
+
+        <div class="admin-form-actions">
+          <button type="submit" class="btn btn-primary" id="saveBtn">सेव करें</button>
+          <button type="button" class="btn btn-danger" id="deleteBtn" hidden>लेख हटाएँ</button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <script src="/assets/js/admin.js" defer></script>
+</body>
+</html>

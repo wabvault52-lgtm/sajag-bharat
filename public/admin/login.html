@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>एडमिन लॉगिन | सजग भारत</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+</head>
+<body class="admin-body admin-body--center">
+  <main class="login-card">
+    <div class="login-brand">
+      <span class="brand-mark" aria-hidden="true"><span class="beacon"></span></span>
+      <span class="brand-name">सजग भारत</span>
+    </div>
+    <h1>एडमिन लॉगिन</h1>
+    <form id="loginForm" class="admin-form" autocomplete="off">
+      <label>
+        <span>यूज़रनेम</span>
+        <input type="text" id="username" name="username" required autocomplete="username">
+      </label>
+      <label>
+        <span>पासवर्ड</span>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </label>
+      <p id="loginError" class="form-error" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block" id="loginSubmit">लॉगिन करें</button>
+    </form>
+  </main>
+  <script src="/assets/js/admin.js" defer></script>
+</body>
+</html>

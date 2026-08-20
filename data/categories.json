@@ -1,0 +1,10 @@
+[
+  { "slug": "india", "name": "भारत", "color": "#1B2A4A" },
+  { "slug": "world", "name": "विश्व", "color": "#1E6F5C" },
+  { "slug": "technology", "name": "तकनीक", "color": "#2A6DB0" },
+  { "slug": "education", "name": "शिक्षा", "color": "#6A4C93" },
+  { "slug": "entertainment", "name": "मनोरंजन", "color": "#B0306A" },
+  { "slug": "sports", "name": "खेल", "color": "#C1440E" },
+  { "slug": "business", "name": "व्यापार", "color": "#B8860B" },
+  { "slug": "health", "name": "स्वास्थ्य", "color": "#3C8A3C" }
+]
