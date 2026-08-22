@@ -197,8 +197,22 @@
     }
   });
 
+  document.getElementById("featuredImageManual").addEventListener("input", (e) => {
+    const path = e.target.value.trim();
+    document.getElementById("featuredImage").value = path;
+    const preview = document.getElementById("imagePreview");
+    const previewWrap = document.getElementById("imagePreviewWrap");
+    if (path) {
+      preview.src = path;
+      previewWrap.hidden = false;
+    } else {
+      previewWrap.hidden = true;
+    }
+  });
+
   document.getElementById("removeImageBtn").addEventListener("click", () => {
     document.getElementById("featuredImage").value = "";
+    document.getElementById("featuredImageManual").value = "";
     document.getElementById("imagePreviewWrap").hidden = true;
     document.getElementById("imageInput").value = "";
   });
@@ -284,6 +298,7 @@
     document.getElementById("excerpt").value = article ? article.excerpt : "";
     document.getElementById("content").value = article ? fromParagraphHtml(article.contentHtml) : "";
     document.getElementById("featuredImage").value = (article && article.featuredImage) || "";
+    document.getElementById("featuredImageManual").value = (article && article.featuredImage) || "";
     document.getElementById("metaTitle").value = (article && article.metaTitle) || "";
     document.getElementById("metaDescription").value = (article && article.metaDescription) || "";
     document.getElementById("status").value = article ? article.status : "draft";

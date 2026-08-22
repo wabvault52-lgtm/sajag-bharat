@@ -88,6 +88,8 @@
         <label>
           <span>मुख्य तस्वीर (वैकल्पिक)</span>
           <input type="file" id="imageInput" accept="image/*">
+          <small class="field-hint">या अगर तस्वीर पहले से GitHub रिपॉज़िटरी में <code>public/assets/images/</code> में डाल चुके हैं, तो नीचे उसका path सीधे टाइप करें:</small>
+          <input type="text" id="featuredImageManual" placeholder="/assets/images/mera-photo.jpg">
           <div id="imagePreviewWrap" class="image-preview-wrap" hidden>
             <img id="imagePreview" alt="">
             <button type="button" class="btn btn-ghost btn-small" id="removeImageBtn">तस्वीर हटाएँ</button>
