@@ -22,11 +22,60 @@
     return data;
   }
 
+  // Devanagari → Latin transliteration so a Hindi title auto-generates a
+  // valid a-z0-9- slug (the server only accepts that character set — see
+  // functions/_lib/validate.js). Not linguistically perfect (no schwa
+  // deletion), but every output is valid and reasonably readable.
+  const DEVANAGARI_CONSONANTS = {
+    "क": "k", "ख": "kh", "ग": "g", "घ": "gh", "ङ": "ng",
+    "च": "ch", "छ": "chh", "ज": "j", "झ": "jh", "ञ": "ny",
+    "ट": "t", "ठ": "th", "ड": "d", "ढ": "dh", "ण": "n",
+    "त": "t", "थ": "th", "द": "d", "ध": "dh", "न": "n",
+    "प": "p", "फ": "ph", "ब": "b", "भ": "bh", "म": "m",
+    "य": "y", "र": "r", "ल": "l", "व": "v", "ळ": "l",
+    "श": "sh", "ष": "sh", "स": "s", "ह": "h",
+    "क्ष": "ksh", "त्र": "tr", "ज्ञ": "gy"
+  };
+  const DEVANAGARI_MATRAS = {
+    "ा": "a", "ि": "i", "ी": "i", "ु": "u", "ू": "u", "ृ": "ri",
+    "े": "e", "ै": "ai", "ो": "o", "ौ": "au", "ं": "n", "ः": "h", "ँ": "n"
+  };
+  const DEVANAGARI_VOWELS = {
+    "अ": "a", "आ": "aa", "इ": "i", "ई": "i", "उ": "u", "ऊ": "u", "ऋ": "ri",
+    "ए": "e", "ऐ": "ai", "ओ": "o", "औ": "au"
+  };
+  const DEVANAGARI_DIGITS = { "०":"0","१":"1","२":"2","३":"3","४":"4","५":"5","६":"6","७":"7","८":"8","९":"9" };
+  const VIRAMA = "\u094D"; // ्
+
+  function transliterateHindi(str) {
+    const chars = Array.from(str);
+    let out = "";
+    for (let i = 0; i < chars.length; i++) {
+      const tri = chars.slice(i, i + 3).join("");
+      const ch = chars[i];
+      const consonant = DEVANAGARI_CONSONANTS[tri] ? tri : (DEVANAGARI_CONSONANTS[ch] ? ch : null);
+      if (consonant) {
+        out += DEVANAGARI_CONSONANTS[consonant];
+        i += consonant.length - 1;
+        const next = chars[i + 1];
+        if (next && DEVANAGARI_MATRAS[next]) { out += DEVANAGARI_MATRAS[next]; i++; }
+        else if (next === VIRAMA) { i++; }
+        else { out += "a"; }
+        continue;
+      }
+      if (DEVANAGARI_VOWELS[ch]) { out += DEVANAGARI_VOWELS[ch]; continue; }
+      if (DEVANAGARI_DIGITS[ch]) { out += DEVANAGARI_DIGITS[ch]; continue; }
+      if (DEVANAGARI_MATRAS[ch] || ch === VIRAMA) continue; // stray, skip
+      out += ch; // Latin letters, digits, spaces, punctuation pass through
+    }
+    return out;
+  }
+
   function slugify(str) {
-    return str
+    return transliterateHindi(str)
       .toLowerCase()
       .trim()
-      .replace(/[^\u0900-\u097Fa-z0-9\s-]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");

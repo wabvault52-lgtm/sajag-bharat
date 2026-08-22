@@ -1,79 +1,74 @@
 # सजग भारत (Sajag Bharat)
 
-Hindi-language news portal. Pure static HTML/CSS/JS on the frontend, a
-lightweight Node-compatible backend (Cloudflare Pages Functions) powering
-the admin panel, and **GitHub as the only data + image store** — no
-separate database, no separate file storage.
+Hindi-language news portal. Pure HTML/CSS/JS frontend (rendered on request
+by Cloudflare Pages Functions), articles stored in **Cloudflare D1** (a
+real SQL database), and **GitHub used only as image storage**.
 
 ---
 
 ## How it actually works
 
-1. The **public site** (`/public`) is plain static HTML/CSS/JS. No
-   framework, no client-side rendering, no build step needed to view it.
-2. The **admin panel** (`/public/admin`) is also plain HTML/CSS/JS. It
-   talks to a small API.
-3. The **API** (`/functions/api/*`) runs as Cloudflare Pages Functions.
-   When you publish or edit an article, the function:
-   - re-renders every static page that changed (the article page, the
-     homepage, the relevant category page, `sitemap.xml`, `rss.xml`)
-   - commits all of it — plus the updated `data/articles.json` — to your
-     GitHub repo **in one atomic commit** (using the Git Data API, so
-     nothing is ever half-published)
-4. That push is what **triggers Cloudflare Pages to rebuild and deploy**
-   automatically. No manual redeploy step.
-5. Uploaded images are committed straight into
-   `public/assets/images/` in the same repo.
+1. Every page (`/`, `/news/:slug`, `/category/:slug`, `/latest`, etc.) is
+   rendered **on request** by a small Cloudflare Pages Function that reads
+   from D1 and returns plain HTML — no client-side framework, nothing to
+   build.
+2. The **admin panel** (`/admin`) is static HTML/CSS/JS that calls a small
+   API (`/functions/api/*`).
+3. Publishing or editing an article writes straight to D1 — **no GitHub
+   commit, no redeploy wait**. The change is live on the next page
+   request, instantly.
+4. Uploading an image commits it to your GitHub repo under
+   `public/assets/images/`. That commit still triggers a normal Cloudflare
+   Pages redeploy (a few seconds, since there's no build step) — this is
+   the one thing that still touches GitHub.
 
-Because the rendering functions (`functions/_lib/render.js`) are pure JS
-with no `fs` or Node-only APIs, the exact same code runs locally (via
-`scripts/generate.js`, in Node) and inside the Cloudflare Function (in the
-Workers runtime) — so local output and live output can never drift apart.
+Because `functions/_lib/render.js` is pure JS with no Node-only APIs, it
+runs identically for every route.
 
 ---
 
 ## One-time setup
 
-### 1. Push this project to a new GitHub repo
+### 1. Push this project to a GitHub repo
+(You've likely already done this.)
 
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/<you>/<repo>.git
-git push -u origin main
-```
+### 2. Create the D1 database
 
-### 2. Create a GitHub Personal Access Token
+Cloudflare dashboard → **Storage & databases → D1 SQL Database → Create
+database**. Name it `sajag-bharat-db`.
+
+Once created, open it and go to its **Console** tab. Paste the entire
+contents of `db/schema.sql` and run it. Then paste the entire contents of
+`db/seed.sql` and run it. This creates the tables and loads the 8
+categories plus a few placeholder articles.
+
+Copy the **Database ID** shown on the database's overview page — you'll
+need it in step 4.
+
+### 3. Create a GitHub Personal Access Token (for images only)
 
 GitHub → Settings → Developer settings → Fine-grained tokens → Generate
-new token. Scope it to **this one repository only**, with **Contents:
-Read and write** permission. Copy the token — you'll paste it into
-Cloudflare in step 4.
+new token. Scope it to **this one repository**, with **Contents: Read and
+write** permission. Copy the token.
 
-### 3. Connect the repo to Cloudflare Pages
+### 4. Connect D1 to your Pages project
 
-Cloudflare dashboard → Workers & Pages → Create → Pages → connect your
-GitHub repo. Build settings:
+In your Cloudflare Pages project → **Settings → Functions → D1 database
+bindings → Add binding**:
+- Variable name: `DB`
+- D1 database: `sajag-bharat-db`
 
-| Setting | Value |
-|---|---|
-| Framework preset | None |
-| Build command | *(leave empty)* |
-| Build output directory | `public` |
+Also update `database_id` in `wrangler.toml` with the ID from step 2, and
+push that change (keeps local dev in sync — the live binding is what
+actually matters in production, set via the dashboard above).
 
-The site is already fully pre-rendered in `/public`, so Cloudflare Pages
-doesn't need to build anything — it just serves the files, and the admin
-panel keeps them updated via GitHub commits.
+### 5. Set environment variables
 
-### 4. Set environment variables
-
-In the Pages project → Settings → Environment variables, add:
+Pages project → Settings → Environment variables:
 
 | Name | Type | Value |
 |---|---|---|
-| `GITHUB_TOKEN` | secret | the token from step 2 |
+| `GITHUB_TOKEN` | secret | the token from step 3 |
 | `GITHUB_OWNER` | plain | your GitHub username/org |
 | `GITHUB_REPO` | plain | this repo's name |
 | `GITHUB_BRANCH` | plain | `main` |
@@ -94,11 +89,11 @@ Generate a session secret:
 openssl rand -hex 32
 ```
 
-### 5. Log in
+### 6. Log in
 
-Visit `https://<your-site>.pages.dev/admin/login.html` and log in with
-`ADMIN_USERNAME` + the password you hashed. Create/edit/delete articles
-from there — every save republishes the live site within seconds.
+Visit `https://<your-site>.pages.dev/admin/login` and log in. Every
+save is instant — no waiting for a GitHub deploy, unless you also
+uploaded a new image in that save.
 
 ---
 
@@ -106,40 +101,39 @@ from there — every save republishes the live site within seconds.
 
 ```bash
 npm install
-npm run generate   # builds /public from /data — no Cloudflare needed
+npm run db:migrate:local     # creates + seeds a local D1 database
+npm run dev                  # wrangler pages dev, with D1 bound automatically from wrangler.toml
 ```
 
-Open `public/index.html` through a local static server (not `file://` —
-absolute asset paths need a real server) to preview the public site:
+Then open `http://localhost:8788` (or whatever port wrangler prints).
 
-```bash
-npx serve public
-```
-
-`npm run dev` runs `wrangler pages dev`, which serves the Functions
-locally too — but note the Functions still call the **real** GitHub API
-(there's no local mock), so local admin-panel testing will genuinely
-commit to your repo.
+Note: the admin API still calls the **real** GitHub API for image
+uploads — there's no local mock — so uploading an image during local dev
+genuinely commits to your repo.
 
 ---
 
 ## Project structure
 
 ```
-public/                  ← deployed as-is (Cloudflare Pages root)
-  index.html, latest.html, about.html, ...
-  category/<slug>.html
-  news/<slug>.html
-  admin/login.html, admin/dashboard.html
-  assets/css, assets/js, assets/images
-  sitemap.xml, robots.txt, rss.xml
+public/
+  admin/login.html, admin/dashboard.html   ← static admin UI
+  assets/css, assets/js, assets/images     ← static assets
 
 functions/
-  _middleware.js         ← auth gate for /admin/* and /api/*
+  index.js, latest.js, about.js, ...       ← one Function per public route
+  category/[slug].js, news/[slug].js       ← dynamic routes
+  sitemap.xml.js, robots.txt.js, rss.xml.js
+  [[catchall]].js                          ← serves static assets that
+                                              don't match a route, then a
+                                              branded 404 for anything else
+  _middleware.js                           ← auth gate for /admin/* and /api/*
   _lib/
-    render.js             ← HTML templates (shared by generate.js AND the Functions)
-    github.js             ← GitHub Git Data API client (atomic commits)
-    site.js               ← "publish" orchestrator
+    db.js            ← all D1 queries
+    render.js         ← HTML templates (shared by every route Function)
+    site-config.js     ← site name/tagline/base URL
+    static-pages.js     ← content for about/contact/privacy/disclaimer
+    github.js             ← image upload only
     auth.js                ← session cookie + PBKDF2 password check (Web Crypto, zero dependencies)
     validate.js
   api/
@@ -147,16 +141,14 @@ functions/
     categories.js
     articles/index.js      ← GET list, POST create
     articles/[id].js       ← PUT update, DELETE
-    media/upload.js
+    media/upload.js        ← image upload to GitHub
 
-data/
-  articles.json           ← the "database"
-  categories.json
-  site.json               ← site name, tagline, base URL
+db/
+  schema.sql        ← run once in the D1 Console
+  seed.sql           ← run once, loads categories + sample articles
 
 scripts/
-  generate.js             ← local build script
-  hash-password.js        ← generates ADMIN_PASSWORD_HASH
+  hash-password.js  ← generates ADMIN_PASSWORD_HASH
 ```
 
 ---
@@ -164,25 +156,20 @@ scripts/
 ## Known limitations (by design, for v1)
 
 - **Single admin user** — one username/password, no roles or multiple
-  accounts. Good enough for a solo operator; extend `data/site.json` /
-  auth.js if you need more later.
-- **`articles.json` as the database** — fine well beyond a few thousand
-  articles. If it ever gets unwieldy, the render functions are already
-  isolated in `_lib/render.js`, so migrating to Cloudflare D1 later is a
-  contained change.
-- **Categories are fixed at v1** — add/edit/remove categories by editing
-  `data/categories.json` directly (then run `npm run generate` locally,
-  or commit + push) rather than through the admin UI.
-- **Images aren't resized/optimized** on upload — they're stored exactly
-  as uploaded. Compress before uploading if that matters to you.
-- Update `baseUrl` in `data/site.json` to your real domain before going
-  live — it's used in canonical URLs, the sitemap, RSS, and Open Graph
-  tags.
+  accounts.
+- **Categories are fixed at v1** — add/edit/remove by editing `db/seed.sql`
+  -style INSERT statements directly in the D1 Console, rather than through
+  the admin UI.
+- **Images aren't resized/optimized** on upload — stored exactly as
+  uploaded.
+- Update `baseUrl` in `functions/_lib/site-config.js` to your real domain
+  before going live — it's used in canonical URLs, the sitemap, RSS, and
+  Open Graph tags.
 
 ---
 
 ## Update the sample content
 
-`data/articles.json` ships with a handful of clearly-labeled placeholder
-articles so you can see the site rendered end-to-end. Delete or edit them
-from the admin panel once you're logged in.
+`db/seed.sql` loads a handful of clearly-labeled placeholder articles so
+the site isn't empty on first load. Delete or edit them from the admin
+panel once you're logged in.

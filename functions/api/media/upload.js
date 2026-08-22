@@ -1,5 +1,5 @@
 // functions/api/media/upload.js
-import { commitFiles } from "../../_lib/github.js";
+import { putImageFile } from "../../_lib/github.js";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const MAX_BYTES = 5 * 1024 * 1024; // 5MB
@@ -23,16 +23,13 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "तस्वीर 5MB से बड़ी नहीं होनी चाहिए" }, 400);
   }
 
-  const ext = filename.split(".").pop().toLowerCase();
   const safeName = `${Date.now()}-${filename.toLowerCase().replace(/[^a-z0-9.\-]/g, "-")}`;
   const path = `public/assets/images/${safeName}`;
 
   try {
-    await commitFiles(env, {
-      message: `तस्वीर अपलोड: ${safeName}`,
-      files: [{ path, content: base64, encoding: "base64" }]
-    });
+    await putImageFile(env, path, base64, `तस्वीर अपलोड: ${safeName}`);
   } catch (err) {
+    console.error(err);
     return json({ error: "GitHub पर अपलोड करने में विफल: " + err.message }, 502);
   }
 

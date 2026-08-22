@@ -3,12 +3,18 @@ pages_build_output_dir = "public"
 compatibility_date = "2026-01-01"
 compatibility_flags = ["nodejs_compat"]
 
+[[d1_databases]]
+binding = "DB"
+database_name = "sajag-bharat-db"
+database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+
 # Environment variables / secrets are NOT set here (never commit secrets).
 # Set them in the Cloudflare dashboard (Pages project → Settings →
 # Environment variables) or via `wrangler pages secret put <NAME>`:
 #
-#   GITHUB_TOKEN         (secret) — a fine-grained GitHub PAT with
-#                          Contents: Read & write on this one repo
+#   GITHUB_TOKEN         (secret) — fine-grained GitHub PAT, Contents:
+#                          Read & write, scoped to this one repo — used
+#                          ONLY for image uploads now
 #   GITHUB_OWNER         (plain)  — your GitHub username or org
 #   GITHUB_REPO          (plain)  — this repo's name
 #   GITHUB_BRANCH        (plain)  — usually "main"
@@ -18,4 +24,6 @@ compatibility_flags = ["nodejs_compat"]
 #   SESSION_SECRET       (secret) — any long random string, e.g.
 #                          `openssl rand -hex 32`
 #
-# See README.md for the full setup walkthrough.
+# The D1 database_id above must also be set, AND the same D1 database must
+# be bound in the Pages project dashboard (Settings → Functions → D1
+# database bindings → variable name "DB"). See README.md.

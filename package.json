@@ -5,9 +5,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "generate": "node scripts/generate.js",
-    "dev": "npm run generate && npx wrangler pages dev public --compatibility-date=2026-01-01",
-    "deploy": "npm run generate && npx wrangler pages deploy public"
+    "dev": "npx wrangler pages dev public --compatibility-date=2026-01-01 --d1=DB",
+    "db:migrate:local": "npx wrangler d1 execute sajag-bharat-db --local --file=db/schema.sql && npx wrangler d1 execute sajag-bharat-db --local --file=db/seed.sql",
+    "db:migrate:remote": "npx wrangler d1 execute sajag-bharat-db --remote --file=db/schema.sql && npx wrangler d1 execute sajag-bharat-db --remote --file=db/seed.sql"
   },
   "devDependencies": {
     "wrangler": "^3.90.0"

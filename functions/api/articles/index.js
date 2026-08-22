@@ -1,15 +1,14 @@
 // functions/api/articles/index.js
-import { readJson } from "../../_lib/github.js";
-import { publishSite } from "../../_lib/site.js";
+import { listArticles, listCategories, slugTaken, createArticle } from "../../_lib/db.js";
 import { validateArticlePayload } from "../../_lib/validate.js";
 
 export async function onRequestGet({ env }) {
   try {
-    const articles = (await readJson(env, "data/articles.json")) || [];
+    const articles = await listArticles(env);
     return json({ articles });
   } catch (err) {
     console.error(err);
-    return json({ error: "GitHub से लेख पढ़ने में विफल" }, 502);
+    return json({ error: "डेटाबेस से लेख पढ़ने में विफल" }, 502);
   }
 }
 
@@ -24,57 +23,39 @@ export async function onRequestPost({ request, env }) {
   const validation = validateArticlePayload(body);
   if (validation.error) return json({ error: validation.error }, 400);
 
-  let articles, categories, siteMeta;
   try {
-    [articles, categories, siteMeta] = await Promise.all([
-      readJson(env, "data/articles.json"),
-      readJson(env, "data/categories.json"),
-      readJson(env, "data/site.json")
-    ]);
+    const categories = await listCategories(env);
+    if (!categories.some((c) => c.slug === body.category)) {
+      return json({ error: "अमान्य श्रेणी" }, 400);
+    }
+
+    if (await slugTaken(env, body.slug)) {
+      return json({ error: "यह स्लग पहले से उपयोग में है, कृपया दूसरा स्लग चुनें" }, 409);
+    }
+
+    const now = new Date().toISOString();
+    const article = {
+      id: crypto.randomUUID(),
+      title: body.title,
+      slug: body.slug,
+      category: body.category,
+      excerpt: body.excerpt,
+      contentHtml: body.contentHtml,
+      featuredImage: body.featuredImage || null,
+      status: body.status === "published" ? "published" : "draft",
+      publishedAt: now,
+      updatedAt: now,
+      metaTitle: body.metaTitle || null,
+      metaDescription: body.metaDescription || null,
+      ogImage: body.featuredImage || null
+    };
+
+    await createArticle(env, article);
+    return json({ article }, 201);
   } catch (err) {
     console.error(err);
-    return json({ error: "GitHub से मौजूदा डेटा पढ़ने में विफल" }, 502);
+    return json({ error: "डेटाबेस में सेव करने में विफल: " + err.message }, 502);
   }
-
-  if (!categories.some((c) => c.slug === body.category)) {
-    return json({ error: "अमान्य श्रेणी" }, 400);
-  }
-  if (articles.some((a) => a.slug === body.slug)) {
-    return json({ error: "यह स्लग पहले से उपयोग में है, कृपया दूसरा स्लग चुनें" }, 409);
-  }
-
-  const now = new Date().toISOString();
-  const article = {
-    id: crypto.randomUUID(),
-    title: body.title,
-    slug: body.slug,
-    category: body.category,
-    excerpt: body.excerpt,
-    contentHtml: body.contentHtml,
-    featuredImage: body.featuredImage || null,
-    status: body.status === "published" ? "published" : "draft",
-    publishedAt: now,
-    updatedAt: now,
-    metaTitle: body.metaTitle || null,
-    metaDescription: body.metaDescription || null,
-    ogImage: body.featuredImage || null
-  };
-
-  const updatedArticles = [...articles, article];
-
-  try {
-    await publishSite({
-      env,
-      articles: updatedArticles,
-      categories,
-      siteMeta,
-      message: `लेख जोड़ा गया: ${article.title}`
-    });
-  } catch (err) {
-    return json({ error: "GitHub पर प्रकाशित करने में विफल: " + err.message }, 502);
-  }
-
-  return json({ article }, 201);
 }
 
 function json(body, status = 200) {
