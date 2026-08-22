@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "sajag-bharat-db"
-database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+database_id = "19292895-619a-413d-9588-83d8a1202435"
 
 # Environment variables / secrets are NOT set here (never commit secrets).
 # Set them in the Cloudflare dashboard (Pages project → Settings →
