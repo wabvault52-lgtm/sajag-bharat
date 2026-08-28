@@ -53,6 +53,12 @@ function categoryUrl(category) {
 
 // ---------- shared partials ----------
 
+function toAbsoluteUrl(url, baseUrl) {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) return url; // already absolute (e.g. imgbb, any external host)
+  return `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+}
+
 function renderHead({ title, description, canonical, ogImage, ogType = "website", siteMeta, jsonLd }) {
   const fullTitle = escapeHtml(title);
   const desc = escapeHtml(description || siteMeta.tagline);
@@ -297,7 +303,7 @@ export function renderArticlePage({ article, categories, allArticles, siteMeta }
     .slice(0, 3);
 
   const canonical = `${siteMeta.baseUrl}${articleUrl(article)}`;
-  const image = article.ogImage || article.featuredImage || `${siteMeta.baseUrl}/assets/images/og-default.png`;
+  const image = toAbsoluteUrl(article.ogImage || article.featuredImage, siteMeta.baseUrl) || `${siteMeta.baseUrl}/assets/images/og-default.png`;
 
   const jsonLd = {
     "@context": "https://schema.org",
